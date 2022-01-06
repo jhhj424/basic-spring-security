@@ -1,23 +1,20 @@
 package io.security.basicsecurity;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Slf4j
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -25,22 +22,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .anyRequest().authenticated();
         http
-                .formLogin();
+                .formLogin()
 //                .loginPage("/loginPage")
-//                .defaultSuccessUrl("/")
-//                .failureUrl("/login")
-//                .usernameParameter("userId")
-//                .passwordParameter("passwd")
-//                .loginProcessingUrl("/login_proc")
-//                .successHandler((request, response, authentication) -> {
-//                    log.info("authentication: {}", authentication.getName());
-//                    response.sendRedirect("/");
-//                })
-//                .failureHandler((request, response, exception) -> {
-//                    log.error("exception: {}", exception.getMessage());
-//                    response.sendRedirect("/login");
-//                })
-//                .permitAll()
+                .defaultSuccessUrl("/")
+                .failureUrl("/login")
+                .usernameParameter("userId")
+                .passwordParameter("passwd")
+                .loginProcessingUrl("/login_proc")
+                .successHandler((request, response, authentication) -> {
+                    log.info("authentication: {}", authentication.getName());
+                    response.sendRedirect("/");
+                })
+                .failureHandler((request, response, exception) -> {
+                    log.error("exception: {}", exception.getMessage());
+                    response.sendRedirect("/login");
+                })
+                .permitAll()
         ;
         http
                 .logout()
@@ -52,7 +49,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler((request, response, authentication) -> {
                     response.sendRedirect("/login");
                 })
-                .deleteCookies("remember-me")
-                ;
+        ;
+        http
+                .rememberMe()
+                .rememberMeParameter("remember")
+                .tokenValiditySeconds(3600)
+                .userDetailsService(userDetailsService)
+        ;
     }
 }
