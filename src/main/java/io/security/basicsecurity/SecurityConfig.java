@@ -60,12 +60,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
-                .expiredUrl("/expired")
+//                .expiredUrl("/expired")
         ;
-        http
-                .sessionManagement()
-                .sessionFixation()
-                .changeSessionId() // 기본적으로 스프링 시큐리티가 설정해줌
-        ;
+//        http
+//                .sessionManagement()
+//                .sessionFixation()
+//                .changeSessionId() // 기본적으로 스프링 시큐리티가 설정해줌
+//        ;
     }
 }
