@@ -76,6 +76,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 })
         ;
 
+        http
+                .csrf() // 기본적으로 csrf 설정 true
+//                .disable()
+        ;
+
 //        http
 //                .authorizeRequests()
 //                .anyRequest().authenticated();
